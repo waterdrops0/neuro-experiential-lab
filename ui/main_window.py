@@ -124,8 +124,9 @@ class MainWindow(QMainWindow):
         self.refresh()
 
     def start_session(self):
-        self.session.start({'states': self.engine.states, 'settings': self.settings})
+        self.error_label.clear()
         self.markers.clear()
+        self.session.start({'states': self.engine.states, 'settings': self.settings})
         self.engine.change_state('SAFE')
         self.refresh()
 

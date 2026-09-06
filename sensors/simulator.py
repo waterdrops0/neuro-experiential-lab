@@ -1,7 +1,8 @@
 import math
 import random
 from collections import deque
-from core.models import PhysiologicalSample, utc_now
+from datetime import datetime, timezone, timedelta
+from core.models import PhysiologicalSample
 from sensors.base import SensorProvider
 
 def calculate_rmssd(rr):
@@ -42,7 +43,8 @@ class PhysiologicalSensorSimulator(SensorProvider):
             rr = 60000/hr
             self.rr_window.append(rr)
             quality = 'POOR' if 110 < t % 180 < 114 else ('FAIR' if 100 < t % 180 < 120 else 'GOOD')
-            samples.append(PhysiologicalSample(utc_now(), self.next_beat, hr, rr, calculate_rmssd(self.rr_window), quality))
+            timestamp = (datetime.now(timezone.utc) - timedelta(seconds=max(0, now-self.next_beat))).isoformat(timespec='milliseconds')
+            samples.append(PhysiologicalSample(timestamp, self.next_beat, hr, rr, calculate_rmssd(self.rr_window), quality))
             self.next_beat += rr/1000
             if len(samples) >= 10:  # avoid replay storms after machine sleep
                 self.next_beat = now + rr/1000

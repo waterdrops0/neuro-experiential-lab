@@ -74,6 +74,18 @@ class AudioEngine:
         if self.mixer and not self.voices and self.status == 'ACTIVE':
             self.status = self.profile = 'OFF'
 
+    def play(self, name, config, now):
+        """Play or loop a profile with its configured fade-in."""
+        self.apply_profile(name, config, now)
+
+    def fade_out(self, seconds, now):
+        """Schedule a nonblocking fade to silence; stop() remains immediate."""
+        self.update(now)
+        for voice in self.voices:
+            voice.update(start=now, initial=voice['channel'].get_volume(), target=0,
+                         duration=max(0, seconds))
+        self.update(now)
+
     def set_volume(self, volume):
         volume = max(0, min(1, volume))
         if self.voices:

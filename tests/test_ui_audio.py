@@ -34,6 +34,10 @@ def test_audio_crossfade_and_stop():
     assert len(audio.voices) == 2
     audio.update(6)
     assert len(audio.voices) == 1
+    audio.fade_out(1, 6)
+    audio.update(7)
+    assert not audio.voices
+    audio.play('SAFE', states['SAFE']['audio'], 8)
     audio.stop()
     audio.update(10)
     assert not audio.voices and not audio.mixer.get_busy()
