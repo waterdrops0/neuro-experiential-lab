@@ -1,0 +1,9 @@
+from abc import ABC, abstractmethod
+
+class HapticOutput(ABC):
+    @abstractmethod
+    def apply_profile(self, config, now): ...
+    @abstractmethod
+    def update(self, now): ...
+    @abstractmethod
+    def stop(self): ...

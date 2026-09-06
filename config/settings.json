@@ -1,0 +1,8 @@
+{
+  "ui_refresh_hz": 4,
+  "chart_window_seconds": 120,
+  "sensor_timeout_seconds": 4,
+  "session_directory": "data/sessions",
+  "audio_enabled": true,
+  "notice": "DEMO experimental values; no medical or therapeutic recommendations."
+}

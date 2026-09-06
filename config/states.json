@@ -1,0 +1,92 @@
+{
+  "SAFE": {
+    "name": "SAFE",
+    "audio": {
+      "file": "",
+      "volume": 0.25,
+      "fade_in": 2.0,
+      "fade_out": 1.5,
+      "loop": true
+    },
+    "haptic": {
+      "profile": "steady_low",
+      "intensity": 0.2,
+      "frequency": 35,
+      "pattern": "steady",
+      "fade_in": 2.0,
+      "fade_out": 1.0
+    }
+  },
+  "RESOURCE": {
+    "name": "RESOURCE",
+    "audio": {
+      "file": "",
+      "volume": 0.3,
+      "fade_in": 2.0,
+      "fade_out": 1.5,
+      "loop": true
+    },
+    "haptic": {
+      "profile": "gentle_pulse",
+      "intensity": 0.3,
+      "frequency": 40,
+      "pattern": "pulse",
+      "fade_in": 2.0,
+      "fade_out": 1.0
+    }
+  },
+  "PERSPECTIVE": {
+    "name": "PERSPECTIVE",
+    "audio": {
+      "file": "",
+      "volume": 0.3,
+      "fade_in": 2.0,
+      "fade_out": 1.5,
+      "loop": true
+    },
+    "haptic": {
+      "profile": "slow_wave",
+      "intensity": 0.25,
+      "frequency": 45,
+      "pattern": "wave",
+      "fade_in": 2.0,
+      "fade_out": 1.0
+    }
+  },
+  "INTEGRATION": {
+    "name": "INTEGRATION",
+    "audio": {
+      "file": "",
+      "volume": 0.25,
+      "fade_in": 2.0,
+      "fade_out": 1.5,
+      "loop": true
+    },
+    "haptic": {
+      "profile": "steady_medium",
+      "intensity": 0.3,
+      "frequency": 38,
+      "pattern": "steady",
+      "fade_in": 2.0,
+      "fade_out": 1.0
+    }
+  },
+  "RETURN": {
+    "name": "RETURN",
+    "audio": {
+      "file": "",
+      "volume": 0.2,
+      "fade_in": 2.0,
+      "fade_out": 1.5,
+      "loop": true
+    },
+    "haptic": {
+      "profile": "return_low",
+      "intensity": 0.15,
+      "frequency": 30,
+      "pattern": "wave",
+      "fade_in": 2.0,
+      "fade_out": 1.0
+    }
+  }
+}
