@@ -2,10 +2,11 @@ import logging
 import time
 from PySide6.QtCore import QTimer
 from PySide6.QtGui import QKeySequence, QShortcut
-from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QSpinBox, QListWidget, QProgressBar, QMessageBox, QApplication)
+from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QSpinBox, QListWidget, QProgressBar, QMessageBox, QApplication, QScrollArea, QFrame, QLayout, QSizePolicy)
 from ui.dashboard import MetricCard, STYLE
 from ui.charts import LiveCharts
 from ui.state_controls import StateControls
+from ui.flow_layout import ButtonFlowLayout
 
 class MainWindow(QMainWindow):
     def __init__(self, bus, engine, sensor, settings):
@@ -21,18 +22,33 @@ class MainWindow(QMainWindow):
         root = QWidget()
         self.setCentralWidget(root)
         layout = QVBoxLayout(root)
+        # Only dashboard content scrolls when its readable minimum cannot fit.
+        # Session controls stay in the outer layout and remain reachable.
+        self.dashboard_scroll = QScrollArea()
+        self.dashboard_scroll.setWidgetResizable(True)
+        self.dashboard_scroll.setFrameShape(QFrame.NoFrame)
+        self.dashboard_content = QWidget()
+        dashboard = QVBoxLayout(self.dashboard_content)
+        dashboard.setContentsMargins(0, 0, 0, 0)
+        dashboard.setSizeConstraint(QLayout.SetMinAndMaxSize)
+        self.dashboard_scroll.setWidget(self.dashboard_content)
+        layout.addWidget(self.dashboard_scroll, 1)
         title = QLabel('NEURO EXPERIENTIAL CONTROL LAB  /  MVP v0.1')
         title.setObjectName('title')
-        layout.addWidget(title)
-        layout.addWidget(QLabel('DEMO · Simulated physiology & haptics · Experimental output only'))
+        title.setWordWrap(True)
+        dashboard.addWidget(title)
+        subtitle = QLabel('DEMO · Simulated physiology & haptics · Experimental output only')
+        subtitle.setWordWrap(True)
+        dashboard.addWidget(subtitle)
         self.top = QLabel()
         self.top.setWordWrap(True)
-        layout.addWidget(self.top)
+        dashboard.addWidget(self.top)
         self.error_label = QLabel('')
         self.error_label.setStyleSheet('color: #ff9c9c')
-        layout.addWidget(self.error_label)
+        self.error_label.setWordWrap(True)
+        dashboard.addWidget(self.error_label)
         body = QHBoxLayout()
-        layout.addLayout(body, 1)
+        dashboard.addLayout(body, 1)
         left = QVBoxLayout()
         body.addLayout(left, 1)
         self.metrics = {}
@@ -48,6 +64,9 @@ class MainWindow(QMainWindow):
         self.suds_button.clicked.connect(lambda: self.session.marker('SUDS', operator_note=str(self.suds.value())))
         left.addWidget(self.suds_button)
         self.charts = LiveCharts(settings['chart_window_seconds'])
+        # Plot size hints are preferred canvas sizes, not required dashboard height.
+        self.charts.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Ignored)
+        self.charts.setMinimumHeight(self.charts.minimumSizeHint().height())
         body.addWidget(self.charts, 4)
         right = QVBoxLayout()
         body.addLayout(right, 2)
@@ -70,10 +89,15 @@ class MainWindow(QMainWindow):
         self.note.setPlaceholderText('Optional operator note · state shortcuts are suspended while typing here')
         self.note.setMaxLength(500)
         layout.addWidget(self.note)
-        bottom = QHBoxLayout()
+        bottom = ButtonFlowLayout()
         layout.addLayout(bottom)
         self.start_button = self.button(bottom, 'START SESSION', self.start_session)
         self.pause_button = self.button(bottom, 'PAUSE', self.pause_session)
+        # Both captions use the same geometry, including native style padding.
+        self.pause_button.setText('RESUME')
+        self.pause_button.ensurePolished()
+        self.pause_button.setMinimumWidth(self.pause_button.sizeHint().width())
+        self.pause_button.setText('PAUSE')
         self.marker_button = self.button(bottom, 'ADD MARKER', self.add_marker)
         self.stop_button = self.button(bottom, 'STOP OUTPUTS · ESC', self.engine.stop_outputs)
         self.stop_button.setObjectName('stop')
@@ -97,6 +121,7 @@ class MainWindow(QMainWindow):
     def button(self, layout, text, callback):
         button = QPushButton(text)
         button.setMinimumHeight(50)
+        button.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
         button.clicked.connect(lambda checked=False: self.safe_call(callback))
         layout.addWidget(button)
         return button

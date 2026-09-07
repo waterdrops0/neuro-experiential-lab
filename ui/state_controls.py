@@ -1,11 +1,12 @@
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton
+from PySide6.QtWidgets import QWidget, QPushButton
 from PySide6.QtGui import QShortcut, QKeySequence
 from core.models import STATES
+from ui.flow_layout import ButtonFlowLayout
 
 class StateControls(QWidget):
     def __init__(self, callback, shortcut_parent):
         super().__init__()
-        layout = QHBoxLayout(self)
+        layout = ButtonFlowLayout(self)
         self.buttons = {}
         self.shortcuts = []
         for index, name in enumerate(STATES, 1):

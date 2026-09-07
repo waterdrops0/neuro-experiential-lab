@@ -1,13 +1,31 @@
-from PySide6.QtWidgets import QFrame, QVBoxLayout, QLabel
+from PySide6.QtCore import QSize, Qt
+from PySide6.QtWidgets import QFrame, QVBoxLayout, QLabel, QSizePolicy
+
+
+class MetricValue(QLabel):
+    """Keep a readable, content-derived minimum even before data arrives."""
+    def minimumSizeHint(self):
+        self.ensurePolished()
+        metrics = self.fontMetrics()
+        # Reserve the longest normal status/state so updates do not resize columns.
+        width = max(metrics.horizontalAdvance(text) for text in
+                    ('DISCONNECTED', 'PERSPECTIVE', self.text()))
+        return super().minimumSizeHint().expandedTo(QSize(width + 4, metrics.height()))
+
+    def sizeHint(self):
+        return super().sizeHint().expandedTo(self.minimumSizeHint())
 
 class MetricCard(QFrame):
     def __init__(self, title, unit=''):
         super().__init__()
         self.setObjectName('metric')
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         layout = QVBoxLayout(self)
         layout.addWidget(QLabel(title))
-        self.value = QLabel('—')
+        self.value = MetricValue('—')
         self.value.setObjectName('metricValue')
+        self.value.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.value.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Minimum)
         layout.addWidget(self.value)
         if unit:
             layout.addWidget(QLabel(unit))
